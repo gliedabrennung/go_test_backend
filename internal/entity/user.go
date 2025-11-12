@@ -1,10 +1,11 @@
 package entity
 
-import "time"
+import (
+	"gorm.io/gorm"
+)
 
 type User struct {
-	Id        int       `db:"id"`
-	Username  string    `db:"username"`
-	Password  string    `db:"password"`
-	CreatedAt time.Time `db:"created_at"`
+	gorm.Model
+	Username       string `gorm:"uniqueIndex;not null"`
+	HashedPassword []byte `gorm:"not null"`
 }
