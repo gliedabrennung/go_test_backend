@@ -2,17 +2,18 @@ package app
 
 import (
 	"errors"
+	"gobackend/internal/entity"
 	"log"
 	"net/http"
 	"time"
 )
 
-func StartServer(appRouter http.Handler) *http.Server {
+func StartServer(appRouter http.Handler, serverConfig entity.Server) *http.Server {
 	server := &http.Server{
-		Addr:         ":8080",
+		Addr:         serverConfig.Addr,
 		Handler:      appRouter,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  time.Duration(serverConfig.ReadTimeout) * time.Second,
+		WriteTimeout: time.Duration(serverConfig.WriteTimeout) * time.Second,
 	}
 	go func() {
 		log.Printf("Server is running on %s", server.Addr)
