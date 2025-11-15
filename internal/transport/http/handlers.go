@@ -5,6 +5,7 @@ import (
 	"errors"
 	"gobackend/internal/entity"
 	"gobackend/internal/repo"
+	"io"
 	"log"
 	"net/http"
 )
@@ -20,7 +21,12 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Invalid JSON payload received")
 		return
 	}
-	defer r.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Printf("Failed to close request body: %v", err)
+		}
+	}(r.Body)
 
 	log.Printf("Received request to create account for user %s", req.Username)
 	response, err := repo.CreateAccount(r.Context(), req.Username, req.Password)
@@ -49,8 +55,11 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 func writeError(w http.ResponseWriter, status int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	err := json.NewEncoder(w).Encode(map[string]interface{}{
 		"success": false,
 		"error":   message,
 	})
+	if err != nil {
+		return
+	}
 }

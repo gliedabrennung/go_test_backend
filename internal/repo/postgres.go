@@ -3,7 +3,6 @@ package repo
 import (
 	"context"
 	"fmt"
-	"gobackend/internal/config"
 	"log"
 	"time"
 
@@ -16,21 +15,26 @@ import (
 
 var (
 	gormDB *gorm.DB
-	ctx    context.Context
+	_      context.Context
 )
 
 func InitDB() error {
-	databaseCfg := config.DBConfig()
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-		databaseCfg.Host,
-		databaseCfg.User,
-		databaseCfg.Pass,
-		databaseCfg.DBName,
-		databaseCfg.Port,
-		databaseCfg.SSLMode,
-		databaseCfg.TimeZone,
-	)
+	//databaseCfg := config.DBConfig()
+	dsn := fmt.Sprintf("host=localhost user=postgres password=1488 dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Almaty") //databaseCfg.Host,
+	//databaseCfg.User,
+	//databaseCfg.Pass,
+	//databaseCfg.DBName,
+	//databaseCfg.Port,
+	//databaseCfg.SSLMode,
+	//databaseCfg.TimeZone,
+
 	var err error
+	gormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+	if err != nil {
+		return fmt.Errorf("error connection to database: %w", err)
+	}
 
 	sqlDB, err := gormDB.DB()
 	if err != nil {
@@ -41,15 +45,7 @@ func InitDB() error {
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	gormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger:   logger.Default.LogMode(logger.Info),
-		ConnPool: sqlDB,
-	})
-	if err != nil {
-		return fmt.Errorf("error connection to database: %w", err)
-	}
-
-	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	status := "up"
