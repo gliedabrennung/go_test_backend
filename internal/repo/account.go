@@ -7,12 +7,20 @@ import (
 	"gobackend/pkg"
 )
 
+var (
+	ErrUserAlreadyExists = fmt.Errorf("user already exists")
+	ErrInvalidInput      = fmt.Errorf("invalid input")
+)
+
 func CreateAccount(ctx context.Context, username string, password string) (*entity.User, error) {
 	gorm := GetDB()
+	if err := gorm.Where("name = ?", username).First(&entity.User{}).Error; err == nil {
+		return nil, ErrUserAlreadyExists
+	}
 
 	err := pkg.ValidateUser(username, password)
 	if err != nil {
-		return nil, err
+		return nil, ErrInvalidInput
 	}
 
 	hashedPassword, err := pkg.HashPassword(password)

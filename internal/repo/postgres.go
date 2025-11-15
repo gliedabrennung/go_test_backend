@@ -31,19 +31,23 @@ func InitDB() error {
 		databaseCfg.TimeZone,
 	)
 	var err error
-	gormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		return fmt.Errorf("error connection to database: %w", err)
-	}
+
 	sqlDB, err := gormDB.DB()
 	if err != nil {
 		return fmt.Errorf("error with SQL DB: %w", err)
 	}
+
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	gormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger:   logger.Default.LogMode(logger.Info),
+		ConnPool: sqlDB,
+	})
+	if err != nil {
+		return fmt.Errorf("error connection to database: %w", err)
+	}
 
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
