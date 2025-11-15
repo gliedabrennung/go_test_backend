@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -40,9 +39,31 @@ func ServerConfig() (entity.Server, error) {
 
 	server := entity.Server{
 		Addr:         serverPort,
-		ReadTimeout:  time.Duration(readTimeoutInt),
-		WriteTimeout: time.Duration(writeTimeoutInt),
+		ReadTimeout:  readTimeoutInt,
+		WriteTimeout: writeTimeoutInt,
 	}
 
 	return server, nil
+}
+
+func DBConfig() entity.Database {
+	host := os.Getenv("HOST")
+	port := os.Getenv("PORT")
+	user := os.Getenv("USER")
+	password := os.Getenv("PASSWORD")
+	dbname := os.Getenv("DBNAME")
+	sslmode := os.Getenv("SSL_MODE")
+	timeZone := os.Getenv("TIME_ZONE")
+
+	database := entity.Database{
+		Host:     host,
+		Port:     port,
+		User:     user,
+		Pass:     password,
+		DBName:   dbname,
+		SSLMode:  sslmode,
+		TimeZone: timeZone,
+	}
+
+	return database
 }

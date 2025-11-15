@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"errors"
 	"fmt"
 	"gobackend/internal/entity"
 
@@ -21,14 +20,13 @@ func ValidateUser(username string, password string) error {
 	}
 	err := validate.Struct(rawUser)
 	if err != nil {
-		var validationErrors validator.ValidationErrors
-		if errors.As(err, &validationErrors) {
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range validationErrors {
 				switch e.Field() {
 				case "Username":
-					return fmt.Errorf("psername must contain only 4 to 14 characters")
+					return fmt.Errorf("Username must contain only 4 to 14 characters")
 				case "Password":
-					return fmt.Errorf("password must contain only 8 to 16 characters")
+					return fmt.Errorf("Password must contain only 8 to 16 characters")
 				}
 			}
 		}

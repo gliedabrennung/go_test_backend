@@ -12,21 +12,21 @@ import (
 func main() {
 	err := config.Init()
 	if err != nil {
-		log.Fatalf("FATAL: failed to initialize config: %v", err)
+		return
 	}
 	err = repo.InitDB()
 	if err != nil {
-		log.Fatalf("FATAL: failed to initialize database: %v", err)
+		log.Fatal(err)
 	}
 	defer func() {
 		err := repo.CloseDB()
 		if err != nil {
-			log.Printf("ERROR: failed to close database connection: %v", err)
+			log.Println(err)
 		}
 	}()
 	serverConfig, err := config.ServerConfig()
 	if err != nil {
-		log.Fatalf("FATAL: failed to initialize server config: %v", err)
+		log.Fatal(err)
 	}
 	appRouter := routes.SetupRoutes()
 	server := app.StartServer(appRouter, serverConfig)

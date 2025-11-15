@@ -2,12 +2,9 @@ package repo
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"gobackend/internal/entity"
 	"gobackend/pkg"
-
-	"github.com/lib/pq"
 )
 
 var (
@@ -17,14 +14,8 @@ var (
 
 func CreateAccount(ctx context.Context, username string, password string) (*entity.User, error) {
 	gorm := GetDB()
-	if err := gorm.WithContext(ctx).Where("username = ?", username).First(&entity.User{}).Error; err == nil {
-		var pgErr *pq.Error
-		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return nil, ErrUserAlreadyExists
-		}
-		if errors.Is(err, ErrUserAlreadyExists) {
-			return nil, ErrUserAlreadyExists
-		}
+	if err := gorm.Where("name = ?", username).First(&entity.User{}).Error; err == nil {
+		return nil, ErrUserAlreadyExists
 	}
 
 	err := pkg.ValidateUser(username, password)
