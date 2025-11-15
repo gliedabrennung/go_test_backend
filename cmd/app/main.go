@@ -10,13 +10,20 @@ import (
 )
 
 func main() {
-	config.Init()
-	err := repo.InitDB()
+	err := config.Init()
+	if err != nil {
+		return
+	}
+	err = repo.InitDB()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer repo.CloseDB()
-
+	defer func() {
+		err := repo.CloseDB()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 	serverConfig, err := config.ServerConfig()
 	if err != nil {
 		log.Fatal(err)
