@@ -1,12 +1,12 @@
 package routes
 
 import (
-	http2 "gobackend/internal/transport/http"
+	api "gobackend/internal/transport/http"
 	"net/http"
 )
 
 func SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /create", http2.CreateAccount)
+	mux.HandleFunc("POST /create/", api.CreateAccount)
 	return mux
 }

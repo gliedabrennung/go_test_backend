@@ -12,8 +12,9 @@ func StartServer(appRouter http.Handler, serverConfig entity.Server) *http.Serve
 	server := &http.Server{
 		Addr:         serverConfig.Addr,
 		Handler:      appRouter,
-		ReadTimeout:  time.Duration(serverConfig.ReadTimeout) * time.Second,
-		WriteTimeout: time.Duration(serverConfig.WriteTimeout) * time.Second,
+		ReadTimeout:  serverConfig.ReadTimeout * time.Second,
+		IdleTimeout:  10 * time.Second,
+		WriteTimeout: serverConfig.WriteTimeout * time.Second,
 	}
 	go func() {
 		log.Printf("Server is running on %s", server.Addr)

@@ -1,7 +1,10 @@
 package entity
 
+import "time"
+
 type Server struct {
 	Addr         string
-	ReadTimeout  int
-	WriteTimeout int
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+	IdleTimeout  time.Duration
 }

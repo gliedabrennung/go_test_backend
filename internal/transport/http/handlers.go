@@ -11,11 +11,6 @@ import (
 )
 
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		writeError(w, http.StatusMethodNotAllowed, "Method not allowed")
-		return
-	}
-
 	var req entity.RawUser
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "Invalid JSON payload received")
@@ -40,7 +35,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		writeError(w, http.StatusInternalServerError, "Error creating account")
+		writeError(w, http.StatusConflict, "Error creating account")
 		return
 	}
 
@@ -60,6 +55,7 @@ func writeError(w http.ResponseWriter, status int, message string) {
 		"error":   message,
 	})
 	if err != nil {
+		log.Printf("FATAL: failed to write error response: %v", err)
 		return
 	}
 }
