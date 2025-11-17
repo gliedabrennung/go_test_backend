@@ -17,8 +17,11 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req entity.RawUser
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "Invalid JSON payload received")
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(&req)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "Invalid JSON or unknown field payload received")
 		return
 	}
 	defer func(Body io.ReadCloser) {
