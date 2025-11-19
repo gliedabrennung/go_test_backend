@@ -22,11 +22,10 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateSignedToken(username string, role string, secretKey []byte) (string, error) {
+func GenerateSignedToken(username string, secretKey []byte) (string, error) {
 	exp := time.Now().Add(time.Hour * 1)
 	claims := jwt.MapClaims{
 		"user": username,
-		"role": role,
 		"exp":  jwt.NewNumericDate(exp),
 		"iat":  jwt.NewNumericDate(time.Now()),
 	}

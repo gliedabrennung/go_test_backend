@@ -8,3 +8,5 @@ DB_USER: "postgres"
 DB_PASSWORD: "1488"
 DB_NAME: "postgres"
 DB_TIMEZONE: "Asia/Almaty"
+
+JWT_SECRET: "I_have_a_special_plan_for_this_world"

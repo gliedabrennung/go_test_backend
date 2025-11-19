@@ -9,6 +9,9 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/spf13/viper"
 )
 
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +53,18 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	jwtToken, err := pkg.GenerateSignedToken(req.Username, []byte(viper.GetString("JWT_SECRET")))
+	if err != nil {
+		log.Printf("Failed to generate JWT token: %v", err)
+		writeError(w, http.StatusInternalServerError, "Error generating JWT token")
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    jwtToken,
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 1),
+		SameSite: http.SameSiteStrictMode,
+	})
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(response)
