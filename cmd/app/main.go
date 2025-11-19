@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	err := config.Init()
+	err := config.InitConfig()
 	if err != nil {
 		return
 	}

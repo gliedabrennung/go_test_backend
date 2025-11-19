@@ -5,17 +5,13 @@ import (
 	"errors"
 	"gobackend/internal/entity"
 	"gobackend/internal/repo"
+	"gobackend/pkg"
 	"io"
 	"log"
 	"net/http"
 )
 
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		writeError(w, http.StatusMethodNotAllowed, "Method not allowed")
-		return
-	}
-
 	var req entity.RawUser
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
@@ -24,6 +20,13 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Invalid JSON or unknown field payload received")
 		return
 	}
+
+	err = pkg.ValidateUser(req.Username, req.Password)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -40,7 +43,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if errors.Is(err, repo.ErrInvalidInput) {
-			writeError(w, http.StatusBadRequest, err.Error())
+			writeError(w, http.StatusBadRequest, "Invalid input")
 			return
 		}
 		writeError(w, http.StatusInternalServerError, "Error creating account")

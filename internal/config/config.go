@@ -3,27 +3,25 @@ package config
 import (
 	"gobackend/internal/entity"
 	"log"
-	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
-func Init() error {
-	if err := godotenv.Load(); err != nil {
-		log.Printf("Warning: .env file not found: %v", err)
-	}
-	return nil
+func InitConfig() error {
+	viper.SetConfigName("config")
+	viper.AddConfigPath("C:\\Users\\gnida\\GolandProjects\\gobackend\\") // <- put here your config file directory
+	return viper.ReadInConfig()
 }
 
 func ServerConfig() (entity.Server, error) {
-	serverPort := os.Getenv("ADDR")
+	serverPort := viper.GetString("ADDR")
 	if serverPort == "" {
 		serverPort = ":8080"
 	}
 
-	readTimeout := os.Getenv("READ_TIMEOUT")
-	writeTimeout := os.Getenv("WRITE_TIMEOUT")
+	readTimeout := viper.GetString("READ_TIMEOUT")
+	writeTimeout := viper.GetString("WRITE_TIMEOUT")
 
 	readTimeoutInt, err := strconv.Atoi(readTimeout)
 	if err != nil {
@@ -46,24 +44,13 @@ func ServerConfig() (entity.Server, error) {
 	return server, nil
 }
 
-func DBConfig() entity.Database {
-	host := os.Getenv("HOST")
-	port := os.Getenv("PORT")
-	user := os.Getenv("USER")
-	password := os.Getenv("PASSWORD")
-	dbname := os.Getenv("DBNAME")
-	sslmode := os.Getenv("SSL_MODE")
-	timeZone := os.Getenv("TIME_ZONE")
-
-	database := entity.Database{
-		Host:     host,
-		Port:     port,
-		User:     user,
-		Pass:     password,
-		DBName:   dbname,
-		SSLMode:  sslmode,
-		TimeZone: timeZone,
+func GetDatabaseConfig() entity.Database {
+	return entity.Database{
+		Host:     viper.GetString("DB_HOST"),
+		Port:     viper.GetString("DB_PORT"),
+		User:     viper.GetString("DB_USER"),
+		Pass:     viper.GetString("DB_PASSWORD"),
+		DBName:   viper.GetString("DB_NAME"),
+		TimeZone: viper.GetString("DB_TIMEZONE"),
 	}
-
-	return database
 }

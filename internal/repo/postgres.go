@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"gobackend/internal/config"
 	"gobackend/internal/entity"
 
 	"gorm.io/driver/postgres"
@@ -19,14 +20,10 @@ var (
 )
 
 func InitDB() error {
-	//databaseCfg := config.DBConfig()
-	dsn := fmt.Sprintf("host=localhost user=postgres password=1488 dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Almaty") //databaseCfg.Host,
-	//databaseCfg.User,
-	//databaseCfg.Pass,
-	//databaseCfg.DBName,
-	//databaseCfg.Port,
-	//databaseCfg.SSLMode,
-	//databaseCfg.TimeZone,
+	cfg := config.GetDatabaseConfig()
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=%s",
+		cfg.Host, cfg.Port, cfg.User, cfg.Pass, cfg.DBName, cfg.TimeZone,
+	)
 
 	var err error
 	gormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{

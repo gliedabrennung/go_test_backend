@@ -12,15 +12,10 @@ var (
 	ErrInvalidInput      = fmt.Errorf("invalid input")
 )
 
-func CreateAccount(ctx context.Context, username string, password string) (*entity.User, error) {
+func CreateAccount(ctx context.Context, username string, password string) (*entity.Response, error) {
 	gorm := GetDB()
-	if err := gorm.Where("name = ?", username).First(&entity.User{}).Error; err == nil {
+	if err := gorm.WithContext(ctx).Where("username = ?", username).First(&entity.User{}).Error; err == nil {
 		return nil, ErrUserAlreadyExists
-	}
-
-	err := pkg.ValidateUser(username, password)
-	if err != nil {
-		return nil, ErrInvalidInput
 	}
 
 	hashedPassword, err := pkg.HashPassword(password)
@@ -37,5 +32,10 @@ func CreateAccount(ctx context.Context, username string, password string) (*enti
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
-	return user, nil
+	res := &entity.Response{
+		ID:       user.ID,
+		Username: user.Username,
+	}
+
+	return res, nil
 }
