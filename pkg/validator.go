@@ -3,7 +3,7 @@ package pkg
 import (
 	"errors"
 	"fmt"
-	"gobackend/internal/entity"
+	"gobackend/internal/models"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -15,7 +15,7 @@ func init() {
 }
 
 func ValidateUser(username string, password string) error {
-	rawUser := entity.RawUser{
+	rawUser := models.RawUser{
 		Username: username,
 		Password: password,
 	}

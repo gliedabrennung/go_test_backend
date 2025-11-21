@@ -1,4 +1,4 @@
-package entity
+package models
 
 type Server struct {
 	Addr         string

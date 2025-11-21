@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"gobackend/internal/config"
-	"gobackend/internal/entity"
+	"gobackend/internal/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -51,7 +51,7 @@ func InitDB() error {
 	}
 	log.Println(status)
 
-	type User entity.User
+	type User models.User
 	if err := gormDB.AutoMigrate(&User{}); err != nil {
 		return fmt.Errorf("error auto migrate: %w", err)
 	}

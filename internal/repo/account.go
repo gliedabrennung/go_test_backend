@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
-	"gobackend/internal/entity"
+	"gobackend/internal/models"
 	"gobackend/pkg"
 )
 
@@ -12,9 +12,9 @@ var (
 	ErrInvalidInput      = fmt.Errorf("invalid input")
 )
 
-func CreateAccount(ctx context.Context, username string, password string) (*entity.Response, error) {
+func CreateAccount(ctx context.Context, username string, password string) (*models.Response, error) {
 	gorm := GetDB()
-	if err := gorm.WithContext(ctx).Where("username = ?", username).First(&entity.User{}).Error; err == nil {
+	if err := gorm.WithContext(ctx).Where("username = ?", username).First(&models.User{}).Error; err == nil {
 		return nil, ErrUserAlreadyExists
 	}
 
@@ -23,7 +23,7 @@ func CreateAccount(ctx context.Context, username string, password string) (*enti
 		return nil, fmt.Errorf("error hashing password: %s", err)
 	}
 
-	user := &entity.User{
+	user := &models.User{
 		Username:       username,
 		HashedPassword: hashedPassword,
 	}
@@ -32,7 +32,7 @@ func CreateAccount(ctx context.Context, username string, password string) (*enti
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
-	res := &entity.Response{
+	res := &models.Response{
 		ID:       user.ID,
 		Username: user.Username,
 	}

@@ -2,13 +2,13 @@ package app
 
 import (
 	"errors"
-	"gobackend/internal/entity"
+	"gobackend/internal/models"
 	"log"
 	"net/http"
 	"time"
 )
 
-func StartServer(appRouter http.Handler, serverConfig entity.Server) *http.Server {
+func StartServer(appRouter http.Handler, serverConfig models.Server) *http.Server {
 	server := &http.Server{
 		Addr:         serverConfig.Addr,
 		Handler:      appRouter,

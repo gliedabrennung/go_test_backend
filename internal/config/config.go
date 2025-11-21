@@ -1,7 +1,7 @@
 package config
 
 import (
-	"gobackend/internal/entity"
+	"gobackend/internal/models"
 	"log"
 	"strconv"
 
@@ -14,7 +14,7 @@ func InitConfig() error {
 	return viper.ReadInConfig()
 }
 
-func ServerConfig() (entity.Server, error) {
+func ServerConfig() (models.Server, error) {
 	serverPort := viper.GetString("ADDR")
 	if serverPort == "" {
 		serverPort = ":8080"
@@ -35,7 +35,7 @@ func ServerConfig() (entity.Server, error) {
 		writeTimeoutInt = 5
 	}
 
-	server := entity.Server{
+	server := models.Server{
 		Addr:         serverPort,
 		ReadTimeout:  readTimeoutInt,
 		WriteTimeout: writeTimeoutInt,
@@ -44,8 +44,8 @@ func ServerConfig() (entity.Server, error) {
 	return server, nil
 }
 
-func GetDatabaseConfig() entity.Database {
-	return entity.Database{
+func GetDatabaseConfig() models.Database {
+	return models.Database{
 		Host:     viper.GetString("DB_HOST"),
 		Port:     viper.GetString("DB_PORT"),
 		User:     viper.GetString("DB_USER"),

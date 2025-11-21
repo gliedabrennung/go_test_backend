@@ -3,7 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
-	"gobackend/internal/entity"
+	"gobackend/internal/models"
 	"gobackend/internal/repo"
 	"gobackend/pkg"
 	"io"
@@ -15,7 +15,7 @@ import (
 )
 
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
-	var req entity.RawUser
+	var req models.RawUser
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&req)
