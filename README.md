@@ -1,1 +1,1 @@
-go net/http backend example for further projects
+go net/http backend boilerplate for further projects
